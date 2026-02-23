@@ -114,15 +114,16 @@ You have complete control over your data:
 
 This extension requires the following Chrome permissions:
 
-- **activeTab:** To access the current tab only when you explicitly click the extension icon (more secure than broad host permissions)
-- **scripting:** To inject video playback controls into web pages when you add them to the recording queue
+- **tabs:** To identify which tab contains the video you want to record
+- **scripting:** To inject controls into web pages for automatic video playback
 - **downloads:** To save recorded videos to your local device
 - **offscreen:** To use MediaRecorder API for video capture (required in Manifest V3)
 - **tabCapture:** To capture video/audio streams from browser tabs (core functionality)
 - **storage:** To save your queue and settings locally
 - **identity:** To authenticate with Google Drive using OAuth2
+- **Host permissions (`<all_urls>`):** To allow recording videos from any website where you take courses
 
-The extension only accesses tabs you explicitly interact with by clicking the extension icon. It does not automatically run on all websites.
+**Why `<all_urls>` is necessary:** This extension is designed to work with ANY online course platform (Udemy, Coursera, Khan Academy, corporate training sites, university portals, etc.). Since we cannot predict every domain where users take courses, we need broad host permissions. However, the extension only becomes active on tabs that you explicitly add to your recording queue - it does not collect data from or interact with websites you browse normally.
 
 ## Children's Privacy
 
