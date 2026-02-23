@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Course Video Queue Recorder</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 450px;
+      min-height: 400px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      font-size: 14px;
+      color: #333;
+      background: #f8f9fa;
+    }
+
+    .container {
+      padding: 16px;
+    }
+
+    h2 {
+      font-size: 16px;
+      margin-bottom: 12px;
+      color: #1a73e8;
+      border-bottom: 2px solid #1a73e8;
+      padding-bottom: 6px;
+    }
+
+    section {
+      background: white;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .form-group {
+      margin-bottom: 10px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 4px;
+      font-weight: 500;
+      font-size: 12px;
+      color: #555;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #1a73e8;
+    }
+
+    button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    .btn-primary {
+      background: #1a73e8;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #1557b0;
+    }
+
+    .btn-secondary {
+      background: #5f6368;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #3c4043;
+    }
+
+    .btn-success {
+      background: #1e8e3e;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: #137333;
+    }
+
+    .btn-danger {
+      background: #d93025;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #b31412;
+    }
+
+    .btn-small {
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .status-bar {
+      padding: 10px;
+      background: #e8f0fe;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: #1967d2;
+      font-weight: 500;
+      text-align: center;
+    }
+
+    .queue-item {
+      background: #f8f9fa;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 10px;
+      margin-bottom: 8px;
+      cursor: default;
+      transition: all 0.2s;
+    }
+
+    .queue-item.draggable {
+      cursor: move;
+    }
+
+    .queue-item.dragging {
+      opacity: 0.5;
+      transform: scale(0.98);
+    }
+
+    .queue-item.drag-over {
+      border-color: #1a73e8;
+      background: #e8f0fe;
+    }
+
+    .queue-item-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .status-icon {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .status-icon.waiting {
+      background: #9aa0a6;
+    }
+
+    .status-icon.recording {
+      background: #1a73e8;
+      animation: pulse 1.5s infinite;
+    }
+
+    .status-icon.uploading {
+      background: #1a73e8;
+      animation: pulse 1.5s infinite;
+    }
+
+    .status-icon.done {
+      background: #1e8e3e;
+    }
+
+    .status-icon.error {
+      background: #d93025;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .queue-item-title {
+      flex: 1;
+      font-weight: 500;
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .status-label {
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .status-label.waiting {
+      background: #f1f3f4;
+      color: #5f6368;
+    }
+
+    .status-label.recording {
+      background: #e8f0fe;
+      color: #1967d2;
+    }
+
+    .status-label.uploading {
+      background: #e8f0fe;
+      color: #1967d2;
+    }
+
+    .status-label.done {
+      background: #e6f4ea;
+      color: #137333;
+    }
+
+    .status-label.error {
+      background: #fce8e6;
+      color: #c5221f;
+    }
+
+    .queue-item-url {
+      font-size: 11px;
+      color: #5f6368;
+      margin-bottom: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .queue-item-actions {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .empty-queue {
+      text-align: center;
+      padding: 30px;
+      color: #5f6368;
+      font-style: italic;
+    }
+
+    .controls {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .radio-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .radio-label {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+
+    .radio-label input[type="radio"] {
+      cursor: pointer;
+    }
+
+    .drive-status {
+      padding: 8px;
+      background: #f1f3f4;
+      border-radius: 4px;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .drive-status.connected {
+      background: #e6f4ea;
+      color: #137333;
+    }
+
+    .folder-display {
+      padding: 8px;
+      background: #e8f0fe;
+      border-radius: 4px;
+      font-size: 12px;
+      color: #1967d2;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .folder-display::before {
+      content: "📁";
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Settings Section -->
+    <section>
+      <h2>⚙️ Settings</h2>
+      <div class="form-group">
+        <label for="playButtonSelector">Play Button CSS Selector:</label>
+        <input type="text" id="playButtonSelector" placeholder="e.g., button.play-btn, video" value="video">
+      </div>
+      <div class="form-group">
+        <label for="maxDuration">Max Duration (minutes):</label>
+        <input type="number" id="maxDuration" min="1" max="300" value="90">
+      </div>
+      <button class="btn-primary" id="saveSettings">Save Settings</button>
+    </section>
+
+    <!-- Google Drive Section -->
+    <section>
+      <h2>☁️ Google Drive</h2>
+      <div class="form-group">
+        <label>Save Location:</label>
+        <div class="radio-group">
+          <label class="radio-label">
+            <input type="radio" name="saveLocation" value="local" id="saveLocal" checked>
+            <span>Local Only</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="saveLocation" value="drive" id="saveDrive">
+            <span>Google Drive</span>
+          </label>
+          <label class="radio-label">
+            <input type="radio" name="saveLocation" value="both" id="saveBoth">
+            <span>Both</span>
+          </label>
+        </div>
+      </div>
+      <div class="drive-status" id="driveStatus">Not connected</div>
+      <div id="folderDisplay" class="folder-display" style="display: none;"></div>
+      <div class="button-group">
+        <button class="btn-primary btn-small" id="connectDrive">Connect to Drive</button>
+        <button class="btn-secondary btn-small" id="selectFolder" style="display: none;">Choose Folder</button>
+        <button class="btn-danger btn-small" id="disconnectDrive" style="display: none;">Disconnect</button>
+      </div>
+    </section>
+
+    <!-- Add to Queue Section -->
+    <section>
+      <h2>➕ Add to Queue</h2>
+      <div class="form-group">
+        <label for="urlInput">URL:</label>
+        <input type="text" id="urlInput" placeholder="https://example.com/course/video">
+      </div>
+      <div class="button-group">
+        <button class="btn-success" id="addUrl">Add URL</button>
+        <button class="btn-secondary" id="addCurrentTab">Add Current Tab</button>
+      </div>
+    </section>
+
+    <!-- Queue Controls Section -->
+    <section>
+      <h2>🎬 Queue</h2>
+      <div class="status-bar" id="statusBar">Idle</div>
+      <div class="controls">
+        <button class="btn-success" id="startQueue">▶ Start Queue</button>
+        <button class="btn-danger" id="stopQueue">⏹ Stop After Current</button>
+        <button class="btn-danger" id="stopNow" style="display: none;">⏹ Stop Recording Now</button>
+      </div>
+    </section>
+
+    <!-- Queue List Section -->
+    <section>
+      <h2>📋 Queue Items</h2>
+      <div id="queueList">
+        <div class="empty-queue">No items in queue</div>
+      </div>
+    </section>
+  </div>
+
+  <script src="drive.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

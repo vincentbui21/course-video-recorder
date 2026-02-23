@@ -1,0 +1,47 @@
+{
+  "manifest_version": 3,
+  "name": "Course Video Queue Recorder",
+  "version": "1.0.0",
+  "description": "Record course videos from a dynamic queue with auto-play and silence detection",
+  "permissions": [
+    "tabs",
+    "scripting",
+    "downloads",
+    "offscreen",
+    "tabCapture",
+    "storage",
+    "identity"
+  ],
+  "oauth2": {
+    "client_id": "1032034802604-9tejdjc0b17e65tthens4kf13voq8rmu.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/drive.file"
+    ]
+  },
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
