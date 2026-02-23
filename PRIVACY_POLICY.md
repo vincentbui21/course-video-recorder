@@ -159,7 +159,7 @@ By installing and using Course Video Queue Recorder, you consent to this Privacy
 If you have questions, concerns, or requests regarding this Privacy Policy or your data, please contact us:
 
 - **GitHub Issues:** https://github.com/vincentbui21/course-video-recorder/issues
-- **Email:** vincentbui21@example.com (update with your actual email)
+- **Email:** vincentbui2108@gmail.com
 
 ## Open Source
 
