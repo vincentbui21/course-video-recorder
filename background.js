@@ -812,6 +812,19 @@ async function recordItem(item) {
     await chrome.tabs.update(tabId, { active: true });
     await new Promise(resolve => setTimeout(resolve, 500));
     
+    // Inject content script dynamically (required for activeTab permission)
+    console.log('Injecting content script...');
+    try {
+      await chrome.scripting.executeScript({
+        target: { tabId: tabId },
+        files: ['content.js']
+      });
+      console.log('Content script injected successfully');
+      await new Promise(resolve => setTimeout(resolve, 300));
+    } catch (error) {
+      console.warn('Could not inject content script (may already be injected):', error);
+    }
+    
     // Send direct message to content.js to trigger autoplay
     console.log('Sending trigger-play message to content script...');
     try {

@@ -114,14 +114,15 @@ You have complete control over your data:
 
 This extension requires the following Chrome permissions:
 
-- **tabs:** To identify which tab contains the video you want to record
-- **scripting:** To inject controls into web pages for automatic video playback
+- **activeTab:** To access the current tab only when you explicitly click the extension icon (more secure than broad host permissions)
+- **scripting:** To inject video playback controls into web pages when you add them to the recording queue
 - **downloads:** To save recorded videos to your local device
 - **offscreen:** To use MediaRecorder API for video capture (required in Manifest V3)
 - **tabCapture:** To capture video/audio streams from browser tabs (core functionality)
 - **storage:** To save your queue and settings locally
 - **identity:** To authenticate with Google Drive using OAuth2
-- **Host permissions (`<all_urls>`):** To allow recording videos from any website you visit
+
+The extension only accesses tabs you explicitly interact with by clicking the extension icon. It does not automatically run on all websites.
 
 ## Children's Privacy
 
